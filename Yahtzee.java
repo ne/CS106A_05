@@ -1,7 +1,8 @@
 /*
  * File: Yahtzee.java
  * ------------------
- * This program will eventually play the Yahtzee game.
+ * This program will play the Yahtzee game.
+ * Author: Nicolas Echavarria
  */
 
 import acm.io.*;
