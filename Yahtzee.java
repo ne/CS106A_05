@@ -31,6 +31,8 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
     }
 
     private void playGame() {
+        //Initialization of scoreboard to -1 for every category
+        int[] scores = {-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1};
         for (int k = 0; k <= N_SCORING_CATEGORIES; k++) {
             println("This is turn:" + k);
             //TODO 4. Handle the game with more than one player.
@@ -89,7 +91,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
 
             }
 
-            //TODO 0. Enable option to manually set dices to test
+            //Option to manually set dices to test
             IODialog dialog = getDialog();
             for (int i = 0; i <= 4; i++) {
                 diceValues[i] = dialog.readInt("Enter value for dice " + i);
@@ -102,53 +104,45 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
             println(diceValues[3]);
             println(diceValues[4]);
 
-
+            //Cycle of scoring starts
             display.printMessage("Select a category for this roll");
             int category = display.waitForPlayerToSelectCategory();
-            println("Category selected:" + category);
-            scores[category - 1] = -1;
 
-            //Only for debugging
-            println("This is the single-dimensional array");
-            println(scores[0]);
-            println(scores[1]);
-            println(scores[2]);
-            println(scores[3]);
-            println(scores[4]);
-            println(scores[5]);
-            println(scores[6]);
-            println(scores[7]);
-            println(scores[8]);
-            println(scores[9]);
-            println(scores[10]);
-            println(scores[11]);
-            println(scores[12]);
-            println(scores[13]);
-            println(scores[14]);
-            println(scores[15]);
-            println(scores[16]);
+            if (verifyCategory(category)) {
+                if (validateCategory(diceValues, category)) {
+                    CalculateScore(diceValues, category);
+                    println("The calculated score is:" + score);
+                    display.updateScorecard(category, 1, score);
+                    scores[category - 1] = score;
+                } else {
+                    display.updateScorecard(category, 1, 0);
+                    scores[category - 1] = 0;
+                }
 
+                //Only for debugging
+                println("Category selected:" + category);
+                println("This is the single-dimensional array");
+                println(scores[0]);
+                println(scores[1]);
+                println(scores[2]);
+                println(scores[3]);
+                println(scores[4]);
+                println(scores[5]);
+                println(scores[6]);
+                println(scores[7]);
+                println(scores[8]);
+                println(scores[9]);
+                println(scores[10]);
+                println(scores[11]);
+                println(scores[12]);
+                println(scores[13]);
+                println(scores[14]);
+                println(scores[15]);
+                println(scores[16]);
 
-            //TODO 2. Verify that the player has not selected the category before.
-            //if (verifySelectedCategory(category)){
-            //}
-
-
-
-
-            //TODO 3. Implement own checkCategory
-            if (YahtzeeMagicStub.checkCategory(diceValues, category)) {
-                //Calculate score given the current dice values and approved selected category
-                CalculateScore(diceValues, category);
-                println("The calculated score is:" + score);
-                display.updateScorecard(category, 1, score);
-            } else {
-                display.updateScorecard(category, 1, 0);
             }
-
         }
     }
-
 
     /* Rolls the dice and fills up a new array called diceValues */
     private int[] rollDice() {
@@ -167,7 +161,27 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
         }
     }
 
-    //TODO 1. Verify each one of the score calculation cases
+    //TODO 2. Verify that the player has not selected the category before.
+    /*Verifies that the category has not been previously selected*/
+    private boolean verifyCategory(int category) {
+        if (scores[category - 1] != -1) {
+            return true;
+        }
+    return false;
+    }
+
+        //TODO 3. Implement own checkCategory
+        /*Validates that the selected category corresponds to the correct type*/
+
+    private boolean validateCategory(int[] diceValues, int category) {
+        if (YahtzeeMagicStub.checkCategory(diceValues, category)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
     /* Calculates the score based on the current state of the dices and the selected category*/
     private int CalculateScore(int[] diceValues, int category) {
         switch (category) {
@@ -244,9 +258,10 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
                 }
                 for (int j = 0; j < N_DICE; j++) {
                     if (three_of_a_kind[j] == 3) {
-                        score = three_of_a_kind[j] * j;
+                        for (int k = 0; k < N_DICE; k++) {
+                            score += diceValues[k];
+                        }
                     }
-
                 }
                 break;
             case 10:
@@ -274,9 +289,10 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
                 }
                 for (int j = 0; j < N_DICE; j++) {
                     if (four_of_a_kind[j] == 4) {
-                        score = four_of_a_kind[j] * j;
+                        for (int k = 0; k < N_DICE; k++) {
+                            score += diceValues[k];
+                        }
                     }
-
                 }
                 break;
             case 11:
@@ -406,7 +422,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
                 }
                 int isYahtzee = 0;
                 for (int j = 0; j < N_DICE; j++) {
-                    if (yahtzee[j] == 6) {
+                    if (yahtzee[j] == 5) {
                         isYahtzee++;
                     }
                 }
@@ -415,7 +431,9 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
                 }
                 break;
             case 15:
-                score = diceValues[0] + diceValues[1] + diceValues[2] + diceValues[3] + diceValues[4] + diceValues[5] + diceValues[6];
+                for (int j = 0; j < N_DICE; j++) {
+                    score += diceValues[j];
+                }
                 break;
         }
         return score;
@@ -431,6 +449,10 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
     private int[] diceStatus = new int[N_DICE];
     private int[] scores = new int[N_CATEGORIES];
     private int score;
+    private int upperScore;
+    private int upperBonus;
+    private int lowerScore;
+    private int total;
 
 }
 
