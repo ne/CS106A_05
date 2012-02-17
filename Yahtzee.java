@@ -174,6 +174,7 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
             display.updateScorecard(16, playerID, lowerScore);
         }
 
+        //TODO 1 Error in adding up the bonus
         //Total display
         int totalScore = 0;
         for (int i = 0; i < N_CATEGORIES - 1; i++) {
@@ -332,6 +333,8 @@ public class Yahtzee extends GraphicsProgram implements YahtzeeConstants {
                     return true;
                 }
                 break;
+            //TODO 2. Verify the correct assignment of small straight.
+            //TODO 3. Replace constant with i to make it shorter.
             case 12:
                 int[] small_straight = new int[6];
                 for (int i = 0; i < N_DICE; i++) {
